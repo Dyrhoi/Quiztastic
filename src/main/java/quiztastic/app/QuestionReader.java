@@ -3,6 +3,7 @@ package quiztastic.app;
 import quiztastic.core.Question;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 
 /**
@@ -19,8 +20,17 @@ public class QuestionReader {
         this(new BufferedReader(reader));
     }
 
-    public Question readQuestion() {
-       throw new UnsupportedOperationException("Not yet implemented");
+    public Question readQuestion() throws IOException {
+        //throw new UnsupportedOperationException("Not yet implemented");
+        String line = reader.readLine();
+
+        if(line == null)
+            return null;
+
+        return new Question(5);
     }
 
+    public BufferedReader getUnderlyingReader() {
+        return reader;
+    }
 }

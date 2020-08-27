@@ -9,5 +9,8 @@
         <module name="Quiztastic" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Quiztastic" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
