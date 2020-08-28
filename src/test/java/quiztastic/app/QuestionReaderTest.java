@@ -41,6 +41,9 @@ class QuestionReaderTest {
         assertNotNull(q);
         // Insert more tests
         assertEquals(q.getScore(), 100);
+        assertEquals(q.getCategory(), "LAKES & RIVERS");
+        assertEquals(q.getQuestion(), "River mentioned most often in the Bible");
+        assertEquals(q.getAnswer(), "the Jordan");
 
         Question end = reader.readQuestion();
         assertNull(end);

@@ -20,14 +20,22 @@ public class QuestionReader {
         this(new BufferedReader(reader));
     }
 
-    public Question readQuestion() throws IOException {
+    public Question readQuestion() throws IOException, NumberFormatException {
         //throw new UnsupportedOperationException("Not yet implemented");
         String line = reader.readLine();
-
         if(line == null)
             return null;
 
-        return new Question(5);
+        String[] questionData = line.split("\t");
+        if(questionData.length != 4)
+            return null;
+
+        int score = Integer.parseInt(questionData[0]);
+        String category = questionData[1];
+        String question = questionData[2];
+        String answer = questionData[3];
+
+        return new Question(score, category, question, answer);
     }
 
     public BufferedReader getUnderlyingReader() {
