@@ -62,7 +62,7 @@ class QuestionReaderTest {
     }
 
     @Test
-    void shouldThrowParseExceptionBadInteger() throws IOException {
+    void shouldThrowParseExceptionBadInteger() {
         String questionText = "xxx\tLAKES & RIVERS\tQuestion\tthe Jordan\n";
         QuestionReader qr = new QuestionReader(new StringReader(questionText));
         ParseException e = assertThrows(ParseException.class, () -> {
