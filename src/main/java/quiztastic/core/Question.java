@@ -38,6 +38,9 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "score=" + score +
+                ", category=" + category +
+                ", question='" + question + '\'' +
+                ", answer='" + answer + '\'' +
                 '}';
     }
 }
