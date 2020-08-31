@@ -44,7 +44,7 @@ public class QuestionReader {
                     lineCounter);
         }
         //Category category = questionFields[1];
-        Category category = new Category();
+        Category category = new Category(questionFields[1]);
         String question = questionFields[2];
         String answer = questionFields[3];
 
