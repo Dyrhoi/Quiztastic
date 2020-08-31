@@ -1,13 +1,25 @@
 package quiztastic.entries;
 
+import quiztastic.app.ListQuestionRepository;
+import quiztastic.app.QuestionReader;
 import quiztastic.core.Board;
 import quiztastic.domain.BoardController;
+import quiztastic.domain.QuestionRepository;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class DisplayBoard {
     private final BoardController  boardController;
 
     public DisplayBoard() {
-        this.boardController = new BoardController();
+        InputStream s = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("master_season1-35clean.tsv");
+        QuestionReader reader = new QuestionReader(new InputStreamReader(s));
+
+        QuestionRepository qRepo = ListQuestionRepository.fromQuestionReader(reader);
+        this.boardController = new BoardController(qRepo, null);
     }
 
     public void displayBoard() {
