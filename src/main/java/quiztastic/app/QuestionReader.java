@@ -1,5 +1,6 @@
 package quiztastic.app;
 
+import quiztastic.core.Category;
 import quiztastic.core.Question;
 
 import java.io.BufferedReader;
@@ -42,7 +43,8 @@ public class QuestionReader {
             throw new ParseException("Expected int in field 1, but received \"" + questionFields[0] + "\"",
                     lineCounter);
         }
-        String category = questionFields[1];
+        //Category category = questionFields[1];
+        Category category = new Category();
         String question = questionFields[2];
         String answer = questionFields[3];
 

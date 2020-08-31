@@ -7,11 +7,11 @@ package quiztastic.core;
  */
 public class Question {
     private final int score;
-    private final String category;
+    private final Category category;
     private final String question;
     private final String answer;
 
-    public Question(int score, String category, String question, String answer) {
+    public Question(int score, Category category, String question, String answer) {
         this.score = score;
         this.category = category;
         this.question = question;
@@ -30,7 +30,7 @@ public class Question {
         return answer;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
