@@ -33,4 +33,11 @@ public class Question {
     public String getCategory() {
         return category;
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "score=" + score +
+                '}';
+    }
 }
