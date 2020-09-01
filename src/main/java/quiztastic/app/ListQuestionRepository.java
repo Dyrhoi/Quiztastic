@@ -11,12 +11,12 @@ import java.util.*;
 public class ListQuestionRepository implements QuestionRepository {
 
     private final HashMap<Category, List<Question>> questionsRepo = new HashMap<>();
+
     public ListQuestionRepository(QuestionReader reader) throws IOException, ParseException {
         Question q;
         while((q = reader.readQuestion()) != null) {
             this.questionsRepo.computeIfAbsent(q.getCategory(), k -> new ArrayList<>()).add(q);
         }
-
     }
 
     public static ListQuestionRepository fromQuestionReader(QuestionReader reader) throws IOException, ParseException {
