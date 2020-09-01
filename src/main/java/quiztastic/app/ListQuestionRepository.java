@@ -4,22 +4,35 @@ import quiztastic.core.Category;
 import quiztastic.core.Question;
 import quiztastic.domain.QuestionRepository;
 
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
 
 public class ListQuestionRepository implements QuestionRepository {
 
-    public static ListQuestionRepository fromQuestionReader(QuestionReader reader) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+    private final HashMap<Category, List<Question>> questionsRepo = new HashMap<>();
+    public ListQuestionRepository(QuestionReader reader) throws IOException, ParseException {
+        Question q;
+        while((q = reader.readQuestion()) != null) {
+            this.questionsRepo.computeIfAbsent(q.getCategory(), k -> new ArrayList<>()).add(q);
+        }
+
+    }
+
+    public static ListQuestionRepository fromQuestionReader(QuestionReader reader) throws IOException, ParseException {
+        return new ListQuestionRepository(reader);
     }
 
     @Override
     public List<Category> getCategories() {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        ArrayList<Category> cs = new ArrayList<>(this.questionsRepo.keySet());
+        Collections.shuffle(cs);
+        return new ArrayList<>(cs);
     }
 
     @Override
     public List<Question> getQuestionsWithCategory(Category category) {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        Collections.shuffle(this.questionsRepo.get(category));
+        return new ArrayList<>(this.questionsRepo.get(category));
     }
 }

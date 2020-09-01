@@ -3,6 +3,8 @@ package quiztastic.domain;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 

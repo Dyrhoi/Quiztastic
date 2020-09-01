@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ class ListQuestionRepositoryTest {
         return Path.of(url.getFile());
     }
 
-    public static ListQuestionRepository getQuestionsSmallRepo() {
+    public static ListQuestionRepository getQuestionsSmallRepo() throws IOException, ParseException {
         InputStream s = ListQuestionRepository.class
                 .getClassLoader()
                 .getResourceAsStream("questions-small.tsv");
@@ -31,7 +32,7 @@ class ListQuestionRepositoryTest {
     }
 
     @Test
-    void shouldReadTheSmallQuestionFile() throws IOException {
+    void shouldReadTheSmallQuestionFile() throws IOException, ParseException {
         QuestionRepository repo = getQuestionsSmallRepo();
         // Perform tests of equality
     }

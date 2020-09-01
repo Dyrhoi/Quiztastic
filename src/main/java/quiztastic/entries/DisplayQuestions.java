@@ -21,8 +21,6 @@ public class DisplayQuestions {
         while ((q = reader.readQuestion()) != null) {
             System.out.println(q);
         }
-
-
     }
 
     public static void main(String[] args) throws IOException, ParseException {

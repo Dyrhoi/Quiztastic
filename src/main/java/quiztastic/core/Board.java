@@ -40,7 +40,7 @@ public class Board {
                         "Should be 5 groups, there were " + questions.size());
             }
             for (Question q : questions) {
-                if (q.getCategory() != category) {
+                if (!q.getCategory().equals(category)) {
                     throw new IllegalArgumentException("Expected all categories to be "
                             + category + " but was " + q.getCategory());
                 }

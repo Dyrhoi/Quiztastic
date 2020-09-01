@@ -4,7 +4,9 @@ import quiztastic.core.Board;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,10 +31,11 @@ public class BoardController {
     public Board makeBoard() {
         List<Board.Group> groups = new ArrayList<>();
         for (Category c : questionRepository.getCategories()) {
+            if(groups.size() >= 6) break;
             try {
                 groups.add(makeGroup(c));
             } catch (IllegalArgumentException e) {
-                continue;
+                //System.err.println(e.getMessage());
             }
         }
         return new Board(groups);
