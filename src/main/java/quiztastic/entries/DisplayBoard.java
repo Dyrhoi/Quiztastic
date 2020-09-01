@@ -10,19 +10,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class DisplayBoard {
-    private final BoardController  boardController;
+    private final BoardController boardController;
 
     public DisplayBoard() {
         InputStream s = this.getClass()
                 .getClassLoader()
                 .getResourceAsStream("master_season1-35clean.tsv");
         QuestionReader reader = new QuestionReader(new InputStreamReader(s));
-
-        QuestionRepository qRepo = ListQuestionRepository.fromQuestionReader(reader);
-        this.boardController = new BoardController(qRepo, null);
+        QuestionRepository questionRepository =
+                ListQuestionRepository.fromQuestionReader(reader);
+        this.boardController = new BoardController(questionRepository);
     }
 
-    public void displayBoard() {
+    public void displayBoard () {
         Board board = boardController.makeBoard();
         System.out.println(board);
     }

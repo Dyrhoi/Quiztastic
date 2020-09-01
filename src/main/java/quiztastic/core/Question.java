@@ -30,6 +30,7 @@ public class Question {
         return answer;
     }
 
+
     public Category getCategory() {
         return category;
     }

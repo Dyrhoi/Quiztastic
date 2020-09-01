@@ -22,22 +22,17 @@ class ListQuestionRepositoryTest {
         return Path.of(url.getFile());
     }
 
-    public ListQuestionRepository getQuestionsSmallRepo() {
-        InputStream s = this.getClass()
+    public static ListQuestionRepository getQuestionsSmallRepo() {
+        InputStream s = ListQuestionRepository.class
                 .getClassLoader()
                 .getResourceAsStream("questions-small.tsv");
-        if (s == null) fail();
         return ListQuestionRepository.fromQuestionReader(
                 new QuestionReader(new InputStreamReader(s)));
     }
 
     @Test
     void shouldReadTheSmallQuestionFile() throws IOException {
-        QuestionReader reader = new QuestionReader(
-                Files.newBufferedReader(pathToSmallQuestionFile()));
-        QuestionRepository repo =
-                ListQuestionRepository.fromQuestionReader(reader);
-        repo.getQuestion(0);
+        QuestionRepository repo = getQuestionsSmallRepo();
         // Perform tests of equality
     }
 
