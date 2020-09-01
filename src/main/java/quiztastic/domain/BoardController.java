@@ -35,7 +35,7 @@ public class BoardController {
             try {
                 groups.add(makeGroup(c));
             } catch (IllegalArgumentException e) {
-                //System.err.println(e.getMessage());
+                //Skip
             }
         }
         return new Board(groups);

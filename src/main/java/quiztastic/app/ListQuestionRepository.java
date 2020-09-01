@@ -27,12 +27,12 @@ public class ListQuestionRepository implements QuestionRepository {
     public List<Category> getCategories() {
         ArrayList<Category> cs = new ArrayList<>(this.questionsRepo.keySet());
         Collections.shuffle(cs);
-        return new ArrayList<>(cs);
+        return cs;
     }
 
     @Override
     public List<Question> getQuestionsWithCategory(Category category) {
         Collections.shuffle(this.questionsRepo.get(category));
-        return new ArrayList<>(this.questionsRepo.get(category));
+        return this.questionsRepo.get(category);
     }
 }
