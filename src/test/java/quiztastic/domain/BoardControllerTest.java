@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BoardControllerTest {
 
+<<<<<<< HEAD
     /*
     @Test
     void shouldSelectItemsFromList() {
@@ -19,4 +20,6 @@ class BoardControllerTest {
 
      */
 
+=======
+>>>>>>> datsoftlyngby/master
 }
