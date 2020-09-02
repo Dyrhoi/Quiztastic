@@ -10,29 +10,31 @@ import java.util.*;
 
 public class MapQuestionRepository implements QuestionRepository {
 
-    private final HashMap<Category, List<Question>> questionsRepo = new HashMap<>();
+    private final Map<Category, List<Question>> questionsByCategory;
 
-    public MapQuestionRepository(QuestionReader reader) throws IOException, ParseException {
-        Question q;
-        while((q = reader.readQuestion()) != null) {
-            this.questionsRepo.computeIfAbsent(q.getCategory(), k -> new ArrayList<>()).add(q);
-        }
+    public MapQuestionRepository(Map<Category, List<Question>> questionsMapCategory)  {
+        this.questionsByCategory = questionsMapCategory;
     }
 
     public static MapQuestionRepository fromQuestionReader(QuestionReader reader) throws IOException, ParseException {
-        return new MapQuestionRepository(reader);
+        Map<Category, List<Question>> questionsMapCategory = new HashMap<>();
+        Question q;
+        while((q = reader.readQuestion()) != null) {
+            questionsMapCategory.computeIfAbsent(q.getCategory(), k -> new ArrayList<>()).add(q);
+        }
+        return new MapQuestionRepository(questionsMapCategory);
     }
 
     @Override
     public List<Category> getCategories() {
-        ArrayList<Category> cs = new ArrayList<>(this.questionsRepo.keySet());
+        ArrayList<Category> cs = new ArrayList<>(this.questionsByCategory.keySet());
         Collections.shuffle(cs);
         return cs;
     }
 
     @Override
     public List<Question> getQuestionsWithCategory(Category category) {
-        Collections.shuffle(this.questionsRepo.get(category));
-        return this.questionsRepo.get(category);
+        Collections.shuffle(this.questionsByCategory.get(category));
+        return this.questionsByCategory.get(category);
     }
 }
