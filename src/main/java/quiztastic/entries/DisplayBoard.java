@@ -1,6 +1,6 @@
 package quiztastic.entries;
 
-import quiztastic.app.ListQuestionRepository;
+import quiztastic.app.MapQuestionRepository;
 import quiztastic.app.QuestionReader;
 import quiztastic.core.Board;
 import quiztastic.domain.BoardController;
@@ -24,11 +24,11 @@ public class DisplayBoard {
 
         QuestionReader reader = new QuestionReader(new InputStreamReader(s));
         QuestionRepository questionRepository =
-                ListQuestionRepository.fromQuestionReader(reader);
+                MapQuestionRepository.fromQuestionReader(reader);
         this.boardController = new BoardController(questionRepository);
     }
 
-    public void displayBoard () throws IOException, ParseException {
+    public void displayBoard () {
         Board board = boardController.makeBoard();
         System.out.println(board);
     }
