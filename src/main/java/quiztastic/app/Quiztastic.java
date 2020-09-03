@@ -30,9 +30,11 @@ public class Quiztastic {
     }
 
     private final QuestionRepository questions;
+    private final Board board;
 
     private Quiztastic(QuestionRepository questions) {
         this.questions = questions;
+        this.board = new BoardController(this.questions).makeBoard();
     }
 
     /* API BEGIN */
@@ -42,6 +44,6 @@ public class Quiztastic {
     }
 
     public Board getBoard() {
-        return new BoardController(this.questions).makeBoard();
+       return this.board;
     }
 }

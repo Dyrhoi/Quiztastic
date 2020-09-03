@@ -1,6 +1,7 @@
 package quiztastic.ui;
 
 import quiztastic.app.Quiztastic;
+import quiztastic.core.Board;
 
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -29,14 +30,36 @@ public class Protocol {
             switch(line) {
                 case "h":
                 case "help":
-                    out.println("Help Command Issued.");
+                    displayHelp();
                     break;
-
+                case "d":
+                case "draw":
+                    displayBoard();
+                    break;
                 default:
                     out.println("Unrecognized command: " + line);
             }
             out.flush();
             line = fetchCommand();
         }
+    }
+
+    public void displayHelp() {
+        out.println(
+                "Your options are: \n" +
+                "  - [h]elp: ask for help.\n" +
+                "  - [d]raw: draw the board.\n" +
+                "  - [a]nswer A200: get the question for category A, question 200.\n" +
+                "  - [q]uit: exit program."
+        );
+    }
+
+    public void displayBoard() {
+        /*
+        *
+        * TODO: Getters for our Board groups, so we can manipulate the data.
+        *  Display the formatted board.
+        *
+        * */
     }
 }
