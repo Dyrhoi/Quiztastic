@@ -20,7 +20,7 @@ public class Protocol {
     private String fetchCommand() {
         out.print("> ");
         out.flush();
-        return in.nextLine().strip();
+        return in.nextLine().strip().toLowerCase();
     }
 
     public void run() {
@@ -31,6 +31,7 @@ public class Protocol {
                 case "help":
                     out.println("Help Command Issued.");
                     break;
+
                 default:
                     out.println("Unrecognized command: " + line);
             }
