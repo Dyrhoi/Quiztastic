@@ -37,4 +37,13 @@ public class MapQuestionRepository implements QuestionRepository {
         Collections.shuffle(this.questionsByCategory.get(category));
         return this.questionsByCategory.get(category);
     }
+
+    @Override
+    public Iterable<Question> getQuestions() {
+        List<Question> questions = new ArrayList<>();
+        for(List<Question> l : this.questionsByCategory.values()) {
+            questions.addAll(l);
+        }
+        return questions;
+    }
 }

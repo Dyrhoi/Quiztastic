@@ -22,4 +22,9 @@ public interface QuestionRepository {
      */
     List<Question> getQuestionsWithCategory(Category category);
 
+    /**
+     *
+     * @return a potentially random iterable of all known questions.
+     */
+    Iterable<Question> getQuestions();
 }
