@@ -20,7 +20,17 @@ public class MapQuestionRepository implements QuestionRepository {
         Map<Category, List<Question>> questionsMapCategory = new HashMap<>();
         Question q;
         while((q = reader.readQuestion()) != null) {
-            questionsMapCategory.computeIfAbsent(q.getCategory(), k -> new ArrayList<>()).add(q);
+
+            //Singleton Pattern, only add element to Question List if it exists.
+            List<Question> questionList = questionsMapCategory.get(q.getCategory());
+            if(questionList == null) {
+                Category category = q.getCategory();
+                questionList = new ArrayList<>();
+                questionsMapCategory.put(category, questionList);
+            }
+            questionList.add(q);
+
+
         }
         return new MapQuestionRepository(questionsMapCategory);
     }
