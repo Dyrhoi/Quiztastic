@@ -2,10 +2,9 @@ package quiztastic.app;
 
 import quiztastic.core.Board;
 import quiztastic.core.Question;
-import quiztastic.domain.BoardController;
+import quiztastic.domain.BoardFactory;
 import quiztastic.domain.QuestionRepository;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,7 +33,7 @@ public class Quiztastic {
 
     private Quiztastic(QuestionRepository questions) {
         this.questions = questions;
-        this.board = new BoardController(this.questions).makeBoard();
+        this.board = new BoardFactory(this.questions).makeBoard();
     }
 
     /* API BEGIN */

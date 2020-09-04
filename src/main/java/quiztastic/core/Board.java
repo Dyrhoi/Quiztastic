@@ -10,11 +10,15 @@ public class Board {
     private final List<Group> groups;
 
     public Board(List<Group> groups) {
-        this.groups = new ArrayList<>(groups);
+        this.groups = List.copyOf(groups);
         if (this.groups.size() != 6) {
             throw new IllegalArgumentException(
                     "Should be 6 groups, there were " + groups.size());
         }
+    }
+
+    public List<Group> getGroups() {
+        return groups;
     }
 
     @Override
@@ -30,7 +34,7 @@ public class Board {
 
         public Group(Category category, List<Question> questions) {
             this.category = category;
-            this.questions = new ArrayList<>(questions);
+            this.questions = List.copyOf(questions);
             validate();
         }
 
@@ -45,6 +49,14 @@ public class Board {
                             + category + " but was " + q.getCategory());
                 }
             }
+        }
+
+        public Category getCategory() {
+            return category;
+        }
+
+        public List<Question> getQuestions() {
+            return questions;
         }
 
         @Override

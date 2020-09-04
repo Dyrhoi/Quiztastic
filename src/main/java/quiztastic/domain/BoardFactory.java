@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class BoardController {
+public class BoardFactory {
     public final QuestionRepository questionRepository;
 
-    public BoardController(QuestionRepository questionRepository) {
+    public BoardFactory(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
     }
 
