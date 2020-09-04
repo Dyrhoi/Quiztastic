@@ -67,9 +67,11 @@ public class Protocol {
         for(Board.Group group : board.getGroups()) {
             categories.add(group.getCategory());
 
-            group.getQuestions().sort(Comparator.comparingInt(Question::getScore));
+            //Immutable object, create copy.
+            ArrayList<Question> groupQuestions = new ArrayList<>(group.getQuestions());
+            groupQuestions.sort(Comparator.comparingInt(Question::getScore));
             int x = 0;
-            for(Question q : group.getQuestions()) {
+            for(Question q : groupQuestions) {
                 rowQuestions.computeIfAbsent(x, k -> new ArrayList<>()).add(q);
                 x++;
             }
