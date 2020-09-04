@@ -30,7 +30,6 @@ public class MapQuestionRepository implements QuestionRepository {
             }
             questionList.add(q);
 
-
         }
         return new MapQuestionRepository(questionsMapCategory);
     }
@@ -45,7 +44,11 @@ public class MapQuestionRepository implements QuestionRepository {
     @Override
     public List<Question> getQuestionsWithCategory(Category category) {
         Collections.shuffle(this.questionsByCategory.get(category));
-        return this.questionsByCategory.get(category);
+        Map<Integer, Question> questionsUniqueScore = new HashMap<>();
+        for(Question q : this.questionsByCategory.get(category)) {
+            questionsUniqueScore.put(q.getScore(), q);
+        }
+        return new ArrayList<>(questionsUniqueScore.values());
     }
 
     @Override
