@@ -63,6 +63,7 @@ public class Protocol {
         Board board = this.quiz.getBoard();
         List<Category> categories = new ArrayList<>();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
+
         for(Board.Group group : board.getGroups()) {
             categories.add(group.getCategory());
 
@@ -85,7 +86,8 @@ public class Protocol {
 
         // Add separator with the width of all the categories. ---
         out.println();
-        for(int x = 0; x < IntStream.of(fieldWidths).sum() + (fieldDividerLength * categories.size()); x++) {
+        int whitespace = fieldDividerLength * categories.size();
+        for(int x = 0; x < (IntStream.of(fieldWidths).sum() + whitespace); x++) {
             out.printf("-");
         }
         out.println();
