@@ -58,6 +58,8 @@ public class Protocol {
     }
 
     public void displayBoard() {
+        int fieldDividerLength = 4;
+
         Board board = this.quiz.getBoard();
         List<Category> categories = new ArrayList<>();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
@@ -76,14 +78,14 @@ public class Protocol {
         int[] fieldWidths = new int[6];
         int i = 0;
         for(Category cat : categories) {
-            out.print(cat.getName() + "    ");
+            out.printf("%s%" + fieldDividerLength + "s", cat.getName(), "");
             fieldWidths[i] = cat.getName().length();
             i++;
         }
 
         // Add separator with the width of all the categories. ---
         out.println();
-        for(int x = 0; x < IntStream.of(fieldWidths).sum() + (4 * 5); x++) {
+        for(int x = 0; x < IntStream.of(fieldWidths).sum() + (fieldDividerLength * categories.size()); x++) {
             out.printf("-");
         }
         out.println();
@@ -92,7 +94,7 @@ public class Protocol {
         for(List<Question> qs : rowQuestions.values()) {
             int x = 0;
             for (Question q : qs) {
-                out.printf("%-" + fieldWidths[x] + "d    ", q.getScore());
+                out.printf("%-" + fieldWidths[x] + "d%" + fieldDividerLength + "s", q.getScore(), "");
                 x++;
             }
             out.println();
