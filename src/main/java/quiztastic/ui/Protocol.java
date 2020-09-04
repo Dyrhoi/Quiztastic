@@ -58,13 +58,6 @@ public class Protocol {
     }
 
     public void displayBoard() {
-        /*
-        *
-        * TODO: Getters for our Board groups, so we can manipulate the data. (done)
-        *  Display the formatted board.
-        *
-        * */
-
         Board board = this.quiz.getBoard();
         List<Category> categories = new ArrayList<>();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
