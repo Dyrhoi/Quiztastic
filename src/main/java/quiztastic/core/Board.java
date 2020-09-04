@@ -34,7 +34,8 @@ public class Board {
 
         public Group(Category category, List<Question> questions) {
             this.category = category;
-            this.questions = List.copyOf(questions);
+            // Immutable: this.questions = List.copyOf(questions);
+            this.questions = new ArrayList<>(questions);
             validate();
         }
 

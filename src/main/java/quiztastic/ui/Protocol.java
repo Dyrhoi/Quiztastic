@@ -6,9 +6,8 @@ import quiztastic.core.Category;
 import quiztastic.core.Question;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.IntStream;
 
 public class Protocol {
     private final Quiztastic quiz;
@@ -68,29 +67,40 @@ public class Protocol {
 
         Board board = this.quiz.getBoard();
         List<Category> categories = new ArrayList<>();
-        List<List<Question>> catQuestions = new ArrayList<>();
-        int i = 0;
+        Map<Integer, List<Question>> rowQuestions = new HashMap<>();
         for(Board.Group group : board.getGroups()) {
             categories.add(group.getCategory());
 
-            ArrayList<Question> questions = new ArrayList<>();
+            group.getQuestions().sort(Comparator.comparingInt(Question::getScore));
+            int x = 0;
             for(Question q : group.getQuestions()) {
-
+                rowQuestions.computeIfAbsent(x, k -> new ArrayList<>()).add(q);
+                x++;
             }
-            catQuestions.add(i, questions);
-
-            i++;
-
         }
 
+        // Print all categories, and measure the "length" between them in UI.
+        int[] fieldWidths = new int[6];
+        int i = 0;
         for(Category cat : categories) {
-            out.print(cat.getName() + "\t");
+            out.print(cat.getName() + "    ");
+            fieldWidths[i] = cat.getName().length();
+            i++;
         }
-        out.println("");
-        out.println("------------------------------------------------");
-        for(List<Question> qs : catQuestions) {
+
+        // Add separator with the width of all the categories. ---
+        out.println();
+        for(int x = 0; x < IntStream.of(fieldWidths).sum() + (4 * 5); x++) {
+            out.printf("-");
+        }
+        out.println();
+
+        //Insert all questions
+        for(List<Question> qs : rowQuestions.values()) {
+            int x = 0;
             for (Question q : qs) {
-                out.print(q.getCategory().getName() + "\t");
+                out.printf("%-" + fieldWidths[x] + "d    ", q.getScore());
+                x++;
             }
             out.println();
         }
