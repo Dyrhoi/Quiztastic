@@ -41,7 +41,7 @@ public class Protocol {
     }
 
     private String[] fetchArgs(String cmd, String line) {
-        return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split( " ") : null;
+        return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split( " ") : new String[] {};
     }
 
     //private String
@@ -133,9 +133,16 @@ public class Protocol {
     }
 
     public void answerQuestion(String[] args) {
-        if(args.length < 2)
+        if(args.length < 2) {
             out.println("Error not enough arguments.");
-        String categoryID = args[0].substring(0,1);
+            return;
+        }
+        List<String> list = new ArrayList<>();
+        for(int i : IDToAlphabet.keySet()) {
+            list.add(IDToAlphabet.get(i).toLowerCase());
+        }
+        Collections.sort(list);
+        int categoryID = String.join("", list).indexOf(args[0].substring(0,1));
         int score = Integer.parseInt(args[0].substring(1));
         out.println(categoryID + " " + score);
     }
