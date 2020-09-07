@@ -21,6 +21,15 @@ public class Protocol {
         this.quiz = Quiztastic.getInstance();
     }
 
+    private final Map<Integer, String> IDToAlphabet = Map.of(
+            0,"A",
+            1, "B",
+            2, "C",
+            3, "D",
+            4, "E",
+            5, "F"
+    );
+
     private String fetchCommand() {
         out.print("> ");
         out.flush();
@@ -29,8 +38,10 @@ public class Protocol {
 
     public void run() {
         String line = fetchCommand();
-        while(!line.equals("quit")) {
-            switch(line) {
+        String cmd = line.split(" ")[0] != null ? line.split(" ")[0] : line;
+        String[] args = line.substring(cmd.length()).split( " ");
+        while(!cmd.equals("quit")) {
+            switch(cmd) {
                 case "h":
                 case "help":
                     displayHelp();
@@ -38,6 +49,10 @@ public class Protocol {
                 case "d":
                 case "draw":
                     displayBoard();
+                    break;
+                case "a":
+                case "answer":
+                    answerQuestion(args);
                     break;
                 default:
                     out.println("Unrecognized command: " + line);
@@ -60,12 +75,11 @@ public class Protocol {
     public void displayBoard() {
         int fieldDividerLength = 4;
 
-        Board board = this.quiz.getBoard();
-        List<Category> categories = new ArrayList<>();
+        Board board = this.quiz.getCurrentGame().getBoard();
+        List<Category> categories = this.quiz.getCurrentGame().getCategories();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
 
         for(Board.Group group : board.getGroups()) {
-            categories.add(group.getCategory());
 
             //Immutable object, create copy.
             ArrayList<Question> groupQuestions = new ArrayList<>(group.getQuestions());
@@ -81,8 +95,9 @@ public class Protocol {
         int[] fieldWidths = new int[6];
         int i = 0;
         for(Category cat : categories) {
-            out.printf("%s%" + fieldDividerLength + "s", cat.getName(), "");
-            fieldWidths[i] = cat.getName().length();
+            String name = IDToAlphabet.get(i) + ". " + cat.getName();
+            out.printf("%s%" + fieldDividerLength + "s", name, "");
+            fieldWidths[i] = name.length();
             i++;
         }
 
@@ -103,5 +118,10 @@ public class Protocol {
             }
             out.println();
         }
+
+    }
+
+    public void answerQuestion(String[] args) {
+        String categoryID = args[0].substring(0,1);
     }
 }

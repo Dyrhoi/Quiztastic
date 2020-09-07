@@ -46,6 +46,7 @@ public class Quiztastic {
         return this.questions.getQuestions();
     }
 
+    //Deprecated.
     public Board getBoard() {
        return this.game.getBoard();
     }
