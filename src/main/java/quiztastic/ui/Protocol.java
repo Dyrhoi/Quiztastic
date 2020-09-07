@@ -30,16 +30,25 @@ public class Protocol {
             5, "F"
     );
 
-    private String fetchCommand() {
+    private String fetchInput() {
         out.print("> ");
         out.flush();
         return in.nextLine().strip().toLowerCase();
     }
 
+    private String fetchCmd(String input) {
+        return input.split(" ")[0] != null ? input.split(" ")[0] : input;
+    }
+
+    private String[] fetchArgs(String cmd, String line) {
+        return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split( " ") : null;
+    }
+
+    //private String
     public void run() {
-        String line = fetchCommand();
-        String cmd = line.split(" ")[0] != null ? line.split(" ")[0] : line;
-        String[] args = line.substring(cmd.length()).split( " ");
+        String line = fetchInput();
+        String cmd = fetchCmd(line);
+        String[] args = fetchArgs(cmd, line);
         while(!cmd.equals("quit")) {
             switch(cmd) {
                 case "h":
@@ -58,7 +67,9 @@ public class Protocol {
                     out.println("Unrecognized command: " + line);
             }
             out.flush();
-            line = fetchCommand();
+            line = fetchInput();
+            cmd = fetchCmd(line);
+            args = fetchArgs(cmd, line);
         }
     }
 
@@ -122,6 +133,10 @@ public class Protocol {
     }
 
     public void answerQuestion(String[] args) {
+        if(args.length < 2)
+            out.println("Error not enough arguments.");
         String categoryID = args[0].substring(0,1);
+        int score = Integer.parseInt(args[0].substring(1));
+        out.println(categoryID + " " + score);
     }
 }
