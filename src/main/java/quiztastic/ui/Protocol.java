@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class Protocol {
+public class Protocol implements Runnable {
     private final Quiztastic quiz;
     private final Scanner in;
     private final PrintWriter out;
@@ -45,11 +45,13 @@ public class Protocol {
     }
 
     //private String
+    @Override
     public void run() {
         String line = fetchInput();
         String cmd = fetchCmd(line);
         String[] args = fetchArgs(cmd, line);
         while(!cmd.equals("quit")) {
+            System.out.println("command executed: " + cmd);
             switch(cmd) {
                 case "h":
                 case "help":
