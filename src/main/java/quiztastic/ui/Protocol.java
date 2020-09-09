@@ -73,6 +73,8 @@ public class Protocol implements Runnable {
             cmd = fetchCmd(line);
             args = fetchArgs(cmd, line);
         }
+        //TODO: Remove socket:
+        //code here.
     }
 
     public void displayHelp() {
