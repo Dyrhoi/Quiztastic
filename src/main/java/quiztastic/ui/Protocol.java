@@ -77,10 +77,10 @@ public class Protocol implements Runnable {
 
     public void displayHelp() {
         out.println(
-                "Your options are: \n" +
-                "  - [h]elp: ask for help.\n" +
-                "  - [d]raw: draw the board.\n" +
-                "  - [a]nswer A200: get the question for category A, question 200.\n" +
+                "Your options are: \n\r" +
+                "  - [h]elp: ask for help.\n\r" +
+                "  - [d]raw: draw the board.\n\r" +
+                "  - [a]nswer A200: get the question for category A, question 200.\n\r" +
                 "  - [q]uit: exit program."
         );
     }
