@@ -25,18 +25,20 @@ public class Game {
         return categories;
     }
 
-    public String answerQuestion(int categoryNumber, int questionNumber, String answer) {
-        Question q = this.board.getGroups().get(categoryNumber).getQuestions().get(questionNumber);
-        answerList.add(new Answer(categoryNumber, questionNumber, answer));
-        if(q.getAnswer().equals(answer)) {
+    public String answerQuestion(int categoryNumber, int questionScore, String answer) {
+        Question q = this.board.getQuestionByScore(categoryNumber, questionScore);
+        answerList.add(new Answer(categoryNumber, questionScore, answer));
+        if(q.getAnswer().equalsIgnoreCase(answer)) {
             return null;
         }
         return q.getAnswer();
     }
+    //100
+    //500
 
-    public boolean isAnswered(int categoryNumber, int questionNumber) {
+    public boolean isAnswered(int categoryNumber, int questionScore) {
         for (Answer a : answerList) {
-            if(a.hasIndex(categoryNumber, questionNumber)) {
+            if(a.hasIndex(categoryNumber, questionScore)) {
                 return true;
             }
         }
@@ -49,17 +51,17 @@ public class Game {
 
     private class Answer {
         private final int categoryNumber;
-        private final int questionNumber;
+        private final int questionScore;
         private final String answer;
 
-        public Answer(int categoryNumber, int questionNumber, String answer) {
+        public Answer(int categoryNumber, int questionScore, String answer) {
             this.categoryNumber = categoryNumber;
-            this.questionNumber = questionNumber;
+            this.questionScore = questionScore;
             this.answer = answer;
         }
 
-        public boolean hasIndex(int categoryNumber, int questionNumber) {
-            return (this.categoryNumber == categoryNumber && this.questionNumber == questionNumber);
+        public boolean hasIndex(int categoryNumber, int questionScore) {
+            return (this.categoryNumber == categoryNumber && this.questionScore == questionScore);
         }
     }
 }

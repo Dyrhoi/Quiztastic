@@ -128,7 +128,10 @@ public class Protocol implements Runnable {
         for(List<Question> qs : rowQuestions.values()) {
             int x = 0;
             for (Question q : qs) {
-                out.printf("%-" + fieldWidths[x] + "d%" + fieldDividerLength + "s", q.getScore(), "");
+                if(this.quiz.getCurrentGame().isAnswered(x, q.getScore()))
+                    out.printf("%-" + fieldWidths[x] + "s%" + fieldDividerLength + "s", "---", "");
+                else
+                    out.printf("%-" + fieldWidths[x] + "d%" + fieldDividerLength + "s", q.getScore(), "");
                 x++;
             }
             out.println();
@@ -137,7 +140,7 @@ public class Protocol implements Runnable {
     }
 
     public void answerQuestion(String[] args) {
-        if(args.length < 2) {
+        if(args.length < 1) {
             out.println("Error not enough arguments.");
             return;
         }
@@ -147,7 +150,39 @@ public class Protocol implements Runnable {
         }
         Collections.sort(list);
         int categoryID = String.join("", list).indexOf(args[0].substring(0,1));
-        int score = Integer.parseInt(args[0].substring(1));
+        int score = -1;
+        try {
+            score = Integer.parseInt(args[0].substring(1));
+        } catch (NumberFormatException e) {
+            out.println("Couldn't read the question score");
+            return;
+        }
         out.println(categoryID + " " + score);
+
+        Question foundQuestion = this.quiz.getCurrentGame().getBoard().getQuestionByScore(categoryID, score);
+        if(foundQuestion == null) {
+            out.println("Error, question wasn't found on board");
+            return;
+        }
+        if(this.quiz.getCurrentGame().isAnswered(categoryID, score)) {
+            out.println("This question has already been tried.");
+            return;
+        }
+
+        out.println(foundQuestion.getQuestion());
+
+        String inAnswer = in.nextLine();
+        if(this.quiz.getCurrentGame().isAnswered(categoryID, score)) {
+            out.println("Too slow! This question was just been tried.");
+            return;
+        }
+        String correctAnswer = this.quiz.getCurrentGame().answerQuestion(categoryID, score, inAnswer);
+        if(correctAnswer == null) {
+            //TODO: award points.
+            out.println("Correct answer!");
+        }
+        else {
+            out.println("Incorrect answer, the correct was: " + correctAnswer);
+        }
     }
 }

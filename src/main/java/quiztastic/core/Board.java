@@ -28,6 +28,14 @@ public class Board {
                 '}';
     }
 
+    public Question getQuestionByScore(int groupId, int score) {
+        Group group = groups.get(groupId);
+        for(Question q : group.getQuestions()) {
+            if (q.getScore() == score) return q;
+        }
+        return null;
+    }
+
     public static class Group {
         private final Category category;
         private final List<Question> questions;
