@@ -19,7 +19,7 @@ public class Server {
         while(true) {
             Socket socket = serverSocket.accept();
             System.out.println(socket.getPort() + " connected.");
-            Thread thread = new Thread(new Protocol(new Scanner(socket.getInputStream()), new PrintWriter(socket.getOutputStream(), true)));
+            Thread thread = new Thread(new Protocol(new Scanner(socket.getInputStream()), new PrintWriter(socket.getOutputStream(), true), socket));
             thread.start();
         }
     }

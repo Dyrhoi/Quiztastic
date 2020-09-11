@@ -5,7 +5,9 @@ import quiztastic.core.Board;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -13,12 +15,18 @@ public class Protocol implements Runnable {
     private final Quiztastic quiz;
     private final Scanner in;
     private final PrintWriter out;
+    private Socket socket;
 
     public Protocol(Scanner in, PrintWriter out) {
         this.in = in;
         this.out = out;
 
         this.quiz = Quiztastic.getInstance();
+    }
+
+    public Protocol(Scanner in, PrintWriter out, Socket socket) {
+        this(in, out);
+        this.socket = socket;
     }
 
     private final Map<Integer, String> IDToAlphabet = Map.of(
@@ -75,6 +83,14 @@ public class Protocol implements Runnable {
         }
         //TODO: Remove socket:
         //code here.
+        try {
+            if(socket != null) {
+                socket.close();
+                System.out.println(socket.getPort() + " disconnected.");
+            }
+        } catch (IOException e) {
+            System.out.println("Tried to disconnect " + socket.getPort() + " but encountered an error: "  + e.getMessage());
+        }
     }
 
     public void displayHelp() {
@@ -157,7 +173,7 @@ public class Protocol implements Runnable {
             out.println("Couldn't read the question score");
             return;
         }
-        out.println(categoryID + " " + score);
+        // Debug category number + score pick: out.println(categoryID + " " + score);
 
         Question foundQuestion = this.quiz.getCurrentGame().getBoard().getQuestionByScore(categoryID, score);
         if(foundQuestion == null) {
@@ -178,8 +194,8 @@ public class Protocol implements Runnable {
         }
         String correctAnswer = this.quiz.getCurrentGame().answerQuestion(categoryID, score, inAnswer);
         if(correctAnswer == null) {
-            //TODO: award points.
-            out.println("Correct answer!");
+            out.println("Correct answer! Awarded: " + score + " points!");
+            //TODO: keep track of points.
         }
         else {
             out.println("Incorrect answer, the correct was: " + correctAnswer);
