@@ -94,6 +94,7 @@ public class Protocol implements Runnable {
                 case "answer":
                     answerQuestion(args);
                     break;
+                case "s":
                 case "score":
                     getScores();
                     break;
