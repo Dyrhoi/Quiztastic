@@ -192,7 +192,7 @@ public class Protocol implements Runnable {
         }
         Collections.sort(list);
         int categoryID = String.join("", list).indexOf(args[0].substring(0, 1));
-        int score = -1;
+        int score;
         try {
             score = Integer.parseInt(args[0].substring(1));
         } catch (NumberFormatException e) {
