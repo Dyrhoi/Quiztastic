@@ -56,9 +56,6 @@ public class Game {
         int levenshteinDistance = StringUtilities.levenshteinDistance(q.getAnswer().toLowerCase(), answer);
         int acceptedDistance = (int) Math.round(answer.length() * .15);
 
-        System.out.println(answer);
-        System.out.println(levenshteinDistance + " : " + acceptedDistance);
-
         if(levenshteinDistance <= acceptedDistance) { //correct answer
 
             return null;
