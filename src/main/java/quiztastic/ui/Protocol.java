@@ -29,7 +29,7 @@ public class Protocol implements Runnable {
     }
 
     private final Map<Integer, String> IDToAlphabet = Map.of(
-            0,"A",
+            0, "A",
             1, "B",
             2, "C",
             3, "D",
@@ -37,29 +37,37 @@ public class Protocol implements Runnable {
             5, "F"
     );
 
-    private String fetchInput() {
-        out.print("> ");
-        out.flush();
-        return in.nextLine().strip().toLowerCase();
+    private String fetchInput(String symbol) {
+        try {
+            out.print(symbol + " ");
+            out.flush();
+            return in.nextLine().strip().toLowerCase();
+        } catch (NoSuchElementException e) {
+            System.out.println("A player disconnected unexpectedly, removing player");
+            this.game.removePlayer(player);
+            return null;
+        }
     }
 
+    /*
     private String fetchAnswer() {
         out.print("? ");
         out.flush();
         return in.nextLine().strip().toLowerCase();
     }
+     */
 
     private String fetchCmd(String input) {
         return input.split(" ")[0] != null ? input.split(" ")[0] : input;
     }
 
     private String[] fetchArgs(String cmd, String line) {
-        return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split( " ") : new String[] {};
+        return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split(" ") : new String[]{};
     }
 
     private void initPlayer() {
         out.println("Velkommen til Quiztastic, indtast dit navn:");
-        String name = fetchInput();
+        String name = fetchInput(">");
         this.player = this.game.addPlayer(name);
     }
 
@@ -68,12 +76,12 @@ public class Protocol implements Runnable {
     public void run() {
         initPlayer();
 
-        String line = fetchInput();
+        String line = fetchInput(">");
         String cmd = fetchCmd(line);
         String[] args = fetchArgs(cmd, line);
-        while(!cmd.equals("quit")) {
+        while (!cmd.equals("quit")) {
             System.out.println("command executed: " + cmd);
-            switch(cmd) {
+            switch (cmd) {
                 case "h":
                 case "help":
                     displayHelp();
@@ -86,6 +94,9 @@ public class Protocol implements Runnable {
                 case "answer":
                     answerQuestion(args);
                     break;
+                case "score":
+                    getScores();
+                    break;
                 case "debug":
                     debug(args);
                     break;
@@ -93,7 +104,7 @@ public class Protocol implements Runnable {
                     out.println("Unrecognized command: " + line);
             }
             out.flush();
-            line = fetchInput();
+            line = fetchInput(">");
             cmd = fetchCmd(line);
             args = fetchArgs(cmd, line);
         }
@@ -103,10 +114,10 @@ public class Protocol implements Runnable {
     public void displayHelp() {
         out.println(
                 "Your options are: \n\r" +
-                "  - [h]elp: ask for help.\n\r" +
-                "  - [d]raw: draw the board.\n\r" +
-                "  - [a]nswer A200: get the question for category A, question 200.\n\r" +
-                "  - [q]uit: exit program."
+                        "  - [h]elp: ask for help.\n\r" +
+                        "  - [d]raw: draw the board.\n\r" +
+                        "  - [a]nswer A200: get the question for category A, question 200.\n\r" +
+                        "  - [q]uit: exit program."
         );
     }
 
@@ -117,13 +128,13 @@ public class Protocol implements Runnable {
         List<Category> categories = this.game.getCategories();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
 
-        for(Board.Group group : board.getGroups()) {
+        for (Board.Group group : board.getGroups()) {
 
             //Immutable object, create copy.
             ArrayList<Question> groupQuestions = new ArrayList<>(group.getQuestions());
             groupQuestions.sort(Comparator.comparingInt(Question::getScore));
             int x = 0;
-            for(Question q : groupQuestions) {
+            for (Question q : groupQuestions) {
                 rowQuestions.computeIfAbsent(x, k -> new ArrayList<>()).add(q);
                 x++;
             }
@@ -132,7 +143,7 @@ public class Protocol implements Runnable {
         // Print all categories, and measure the "length" between them in UI.
         int[] fieldWidths = new int[6];
         int i = 0;
-        for(Category cat : categories) {
+        for (Category cat : categories) {
             String name = IDToAlphabet.get(i) + ". " + cat.getName();
             out.printf("%s%" + fieldDividerLength + "s", name, "");
             fieldWidths[i] = name.length();
@@ -142,16 +153,16 @@ public class Protocol implements Runnable {
         // Add separator with the width of all the categories. ---
         out.println();
         int whitespace = fieldDividerLength * categories.size();
-        for(int x = 0; x < (IntStream.of(fieldWidths).sum() + whitespace); x++) {
+        for (int x = 0; x < (IntStream.of(fieldWidths).sum() + whitespace); x++) {
             out.printf("-");
         }
         out.println();
 
         //Insert all questions
-        for(List<Question> qs : rowQuestions.values()) {
+        for (List<Question> qs : rowQuestions.values()) {
             int x = 0;
             for (Question q : qs) {
-                if(this.game.isAnswered(x, q.getScore()))
+                if (this.game.isAnswered(x, q.getScore()))
                     out.printf("%-" + fieldWidths[x] + "s%" + fieldDividerLength + "s", "---", "");
                 else
                     out.printf("%-" + fieldWidths[x] + "d%" + fieldDividerLength + "s", q.getScore(), "");
@@ -170,16 +181,16 @@ public class Protocol implements Runnable {
 
          */
 
-        if(args.length < 1) {
+        if (args.length < 1) {
             out.println("Error not enough arguments.");
             return;
         }
         List<String> list = new ArrayList<>();
-        for(int i : IDToAlphabet.keySet()) {
+        for (int i : IDToAlphabet.keySet()) {
             list.add(IDToAlphabet.get(i).toLowerCase());
         }
         Collections.sort(list);
-        int categoryID = String.join("", list).indexOf(args[0].substring(0,1));
+        int categoryID = String.join("", list).indexOf(args[0].substring(0, 1));
         int score = -1;
         try {
             score = Integer.parseInt(args[0].substring(1));
@@ -194,11 +205,11 @@ public class Protocol implements Runnable {
 
         */
         Question foundQuestion = this.game.getBoard().getQuestionByScore(categoryID, score);
-        if(foundQuestion == null) {
+        if (foundQuestion == null) {
             out.println("Error, question wasn't found on board");
             return;
         }
-        if(this.game.isAnswered(categoryID, score)) {
+        if (this.game.isAnswered(categoryID, score)) {
             out.println("This question has already been tried.");
             return;
         }
@@ -211,8 +222,8 @@ public class Protocol implements Runnable {
 
         */
 
-        String inAnswer = fetchAnswer();
-        if(this.game.isAnswered(categoryID, score)) {
+        String inAnswer = fetchInput("?");
+        if (this.game.isAnswered(categoryID, score)) {
             out.println("Too slow! This question was just been tried.");
             return;
         }
@@ -223,15 +234,28 @@ public class Protocol implements Runnable {
 
          */
         String correctAnswer = this.game.answerQuestion(categoryID, score, inAnswer);
-        if(correctAnswer == null) {
+        if (correctAnswer == null) {
             out.println("Correct answer! Awarded: " + score + " points!");
             int newScore = this.game.addScore(player, score);
             out.println("You now have: " + newScore + " points!");
-        }
-        else {
+        } else {
             out.println("Incorrect answer, the correct was: " + correctAnswer);
         }
     }
+
+    public void getScores() {
+
+        String scoreText = "";
+
+        for (Map.Entry<Player, Integer> entry : this.game.getPlayers().entrySet()) {
+            Player player = entry.getKey();
+            int score = entry.getValue();
+
+            scoreText += player.getName() + " " + score + ", ";
+        }
+        out.println(scoreText.substring(0, scoreText.length() - 2));
+    }
+
     public void debug(String[] args) {
         out.println("Players connected:");
         out.println(this.game.getPlayers());
