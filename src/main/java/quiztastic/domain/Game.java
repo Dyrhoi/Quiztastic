@@ -1,5 +1,6 @@
 package quiztastic.domain;
 
+import com.cedarsoftware.util.StringUtilities;
 import quiztastic.core.Board;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
@@ -51,8 +52,17 @@ public class Game {
     public String answerQuestion(int categoryNumber, int questionScore, String answer) {
         Question q = this.board.getQuestionByScore(categoryNumber, questionScore);
         answerList.add(new Answer(categoryNumber, questionScore, answer));
-        if(q.getAnswer().equalsIgnoreCase(answer)) {
+
+        int levenshteinDistance = StringUtilities.levenshteinDistance(q.getAnswer().toLowerCase(), answer);
+        int acceptedDistance = (int) Math.round(answer.length() * .15);
+
+        System.out.println(answer);
+        System.out.println(levenshteinDistance + " : " + acceptedDistance);
+
+        if(levenshteinDistance <= acceptedDistance) { //correct answer
+
             return null;
+
         }
         return q.getAnswer();
     }
