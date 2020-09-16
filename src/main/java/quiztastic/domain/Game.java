@@ -5,16 +5,39 @@ import quiztastic.core.Category;
 import quiztastic.core.Question;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
 
     private final Board board;
     private final List<Answer> answerList;
+    private final Map<Player, Integer> playersScore;
 
     public Game(Board board, List<Answer> answerList) {
         this.board = board;
         this.answerList = answerList;
+        this.playersScore = new HashMap<>();
+    }
+
+    public Player addPlayer(String name) {
+        Player player = new Player(name);
+        this.playersScore.put(player, 0);
+        return player;
+    }
+
+    public void removePlayer(Player player) {
+        this.playersScore.remove(player);
+    }
+
+    public Map<Player, Integer> getPlayers() {
+        return playersScore;
+    }
+
+    public int addScore(Player player, int score) {
+        this.playersScore.put(player, this.playersScore.get(player) + score);
+        return this.playersScore.get(player);
     }
 
     public List<Category> getCategories() {
@@ -33,8 +56,6 @@ public class Game {
         }
         return q.getAnswer();
     }
-    //100
-    //500
 
     public boolean isAnswered(int categoryNumber, int questionScore) {
         for (Answer a : answerList) {

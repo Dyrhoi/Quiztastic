@@ -19,8 +19,29 @@ public class Server {
         while(true) {
             Socket socket = serverSocket.accept();
             System.out.println(socket.getPort() + " connected.");
-            Thread thread = new Thread(new Protocol(new Scanner(socket.getInputStream()), new PrintWriter(socket.getOutputStream(), true), socket));
-            thread.start();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        new Protocol(
+                            new Scanner(socket.getInputStream()),
+                            new PrintWriter(socket.getOutputStream(), true))
+                        .run();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    finally {
+                        try {
+                            socket.close();
+                            System.out.println("Socket Disconnected. " + socket.getPort());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+
         }
     }
 }

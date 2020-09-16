@@ -4,6 +4,8 @@ import quiztastic.app.Quiztastic;
 import quiztastic.core.Board;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
+import quiztastic.domain.Game;
+import quiztastic.domain.Player;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,18 +17,15 @@ public class Protocol implements Runnable {
     private final Quiztastic quiz;
     private final Scanner in;
     private final PrintWriter out;
-    private Socket socket;
+    private final Game game;
+    private Player player;
 
     public Protocol(Scanner in, PrintWriter out) {
         this.in = in;
         this.out = out;
 
         this.quiz = Quiztastic.getInstance();
-    }
-
-    public Protocol(Scanner in, PrintWriter out, Socket socket) {
-        this(in, out);
-        this.socket = socket;
+        this.game = this.quiz.getCurrentGame();
     }
 
     private final Map<Integer, String> IDToAlphabet = Map.of(
@@ -44,6 +43,12 @@ public class Protocol implements Runnable {
         return in.nextLine().strip().toLowerCase();
     }
 
+    private String fetchAnswer() {
+        out.print("? ");
+        out.flush();
+        return in.nextLine().strip().toLowerCase();
+    }
+
     private String fetchCmd(String input) {
         return input.split(" ")[0] != null ? input.split(" ")[0] : input;
     }
@@ -52,9 +57,17 @@ public class Protocol implements Runnable {
         return line.split(" ").length > 1 ? line.substring(cmd.length() + 1, line.length() - cmd.length() + 1).split( " ") : new String[] {};
     }
 
-    //private String
+    private void initPlayer() {
+        out.println("Velkommen til Quiztastic, indtast dit navn:");
+        String name = fetchInput();
+        this.player = this.game.addPlayer(name);
+    }
+
+
     @Override
     public void run() {
+        initPlayer();
+
         String line = fetchInput();
         String cmd = fetchCmd(line);
         String[] args = fetchArgs(cmd, line);
@@ -73,6 +86,9 @@ public class Protocol implements Runnable {
                 case "answer":
                     answerQuestion(args);
                     break;
+                case "debug":
+                    debug(args);
+                    break;
                 default:
                     out.println("Unrecognized command: " + line);
             }
@@ -81,16 +97,7 @@ public class Protocol implements Runnable {
             cmd = fetchCmd(line);
             args = fetchArgs(cmd, line);
         }
-        //TODO: Remove socket:
-        //code here.
-        try {
-            if(socket != null) {
-                socket.close();
-                System.out.println(socket.getPort() + " disconnected.");
-            }
-        } catch (IOException e) {
-            System.out.println("Tried to disconnect " + socket.getPort() + " but encountered an error: "  + e.getMessage());
-        }
+        this.game.removePlayer(player);
     }
 
     public void displayHelp() {
@@ -106,8 +113,8 @@ public class Protocol implements Runnable {
     public void displayBoard() {
         int fieldDividerLength = 4;
 
-        Board board = this.quiz.getCurrentGame().getBoard();
-        List<Category> categories = this.quiz.getCurrentGame().getCategories();
+        Board board = this.game.getBoard();
+        List<Category> categories = this.game.getCategories();
         Map<Integer, List<Question>> rowQuestions = new HashMap<>();
 
         for(Board.Group group : board.getGroups()) {
@@ -144,7 +151,7 @@ public class Protocol implements Runnable {
         for(List<Question> qs : rowQuestions.values()) {
             int x = 0;
             for (Question q : qs) {
-                if(this.quiz.getCurrentGame().isAnswered(x, q.getScore()))
+                if(this.game.isAnswered(x, q.getScore()))
                     out.printf("%-" + fieldWidths[x] + "s%" + fieldDividerLength + "s", "---", "");
                 else
                     out.printf("%-" + fieldWidths[x] + "d%" + fieldDividerLength + "s", q.getScore(), "");
@@ -156,6 +163,13 @@ public class Protocol implements Runnable {
     }
 
     public void answerQuestion(String[] args) {
+
+        /*
+
+        Redefine arguments into category id and question choice.
+
+         */
+
         if(args.length < 1) {
             out.println("Error not enough arguments.");
             return;
@@ -173,32 +187,53 @@ public class Protocol implements Runnable {
             out.println("Couldn't read the question score");
             return;
         }
-        // Debug category number + score pick: out.println(categoryID + " " + score);
 
-        Question foundQuestion = this.quiz.getCurrentGame().getBoard().getQuestionByScore(categoryID, score);
+        /*
+
+        Find our chosen question and check if it's already been answered.
+
+        */
+        Question foundQuestion = this.game.getBoard().getQuestionByScore(categoryID, score);
         if(foundQuestion == null) {
             out.println("Error, question wasn't found on board");
             return;
         }
-        if(this.quiz.getCurrentGame().isAnswered(categoryID, score)) {
+        if(this.game.isAnswered(categoryID, score)) {
             out.println("This question has already been tried.");
             return;
         }
 
         out.println(foundQuestion.getQuestion());
 
-        String inAnswer = in.nextLine();
-        if(this.quiz.getCurrentGame().isAnswered(categoryID, score)) {
+        /*
+
+        Fetch our users answer, and check if it's been answered while prompted.
+
+        */
+
+        String inAnswer = fetchAnswer();
+        if(this.game.isAnswered(categoryID, score)) {
             out.println("Too slow! This question was just been tried.");
             return;
         }
-        String correctAnswer = this.quiz.getCurrentGame().answerQuestion(categoryID, score, inAnswer);
+
+        /*
+
+        Check if correct answer, award points.
+
+         */
+        String correctAnswer = this.game.answerQuestion(categoryID, score, inAnswer);
         if(correctAnswer == null) {
             out.println("Correct answer! Awarded: " + score + " points!");
-            //TODO: keep track of points.
+            int newScore = this.game.addScore(player, score);
+            out.println("You now have: " + newScore + " points!");
         }
         else {
             out.println("Incorrect answer, the correct was: " + correctAnswer);
         }
+    }
+    public void debug(String[] args) {
+        out.println("Players connected:");
+        out.println(this.game.getPlayers());
     }
 }
