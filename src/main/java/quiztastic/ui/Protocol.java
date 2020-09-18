@@ -42,7 +42,7 @@ public class Protocol implements Runnable {
             out.print(symbol + " ");
             out.flush();
             return in.nextLine().strip().toLowerCase();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             System.out.println("A player disconnected unexpectedly, removing player");
             this.game.removePlayer(player);
             this.game.removeClient(this);
