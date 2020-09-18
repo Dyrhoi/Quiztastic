@@ -45,6 +45,7 @@ public class Protocol implements Runnable {
         } catch (NoSuchElementException e) {
             System.out.println("A player disconnected unexpectedly, removing player");
             this.game.removePlayer(player);
+            this.game.removeClient(this);
             return null;
         }
     }
@@ -74,6 +75,7 @@ public class Protocol implements Runnable {
 
     @Override
     public void run() {
+        this.game.addClient(this);
         initPlayer();
 
         String line = fetchInput(">");
@@ -110,6 +112,7 @@ public class Protocol implements Runnable {
             args = fetchArgs(cmd, line);
         }
         this.game.removePlayer(player);
+        this.game.removeClient(this);
     }
 
     public void displayHelp() {
@@ -178,7 +181,8 @@ public class Protocol implements Runnable {
 
         /*
 
-        Redefine arguments into category id and question choice.
+        Check arguments length (did user enter a category), and check if it's the players
+        turn to choose category.
 
          */
 
@@ -186,6 +190,19 @@ public class Protocol implements Runnable {
             out.println("Error not enough arguments.");
             return;
         }
+
+        if(this.game.getCurrentPlayer() != player) {
+            out.println("Oops, it isn't your turn to choose category. It is: "
+                    + this.game.getCurrentPlayer() + "'s turn");
+            return;
+        }
+
+         /*
+
+        Redefine arguments into category id and question choice.
+
+         */
+
         List<String> list = new ArrayList<>();
         for (int i : IDToAlphabet.keySet()) {
             list.add(IDToAlphabet.get(i).toLowerCase());
@@ -242,6 +259,8 @@ public class Protocol implements Runnable {
         } else {
             out.println("Incorrect answer, the correct was: " + correctAnswer);
         }
+
+        this.game.nextPlayer();
     }
 
     public void getScores() {

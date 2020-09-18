@@ -4,6 +4,7 @@ import com.cedarsoftware.util.StringUtilities;
 import quiztastic.core.Board;
 import quiztastic.core.Category;
 import quiztastic.core.Question;
+import quiztastic.ui.Protocol;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,25 +16,64 @@ public class Game {
     private final Board board;
     private final List<Answer> answerList;
     private final Map<Player, Integer> playersScore;
+    private final ArrayList<Protocol> clients;
+    private volatile Player currentPlayer;
 
     public Game(Board board, List<Answer> answerList) {
         this.board = board;
         this.answerList = answerList;
         this.playersScore = new HashMap<>();
+        this.clients = new ArrayList<>();
+
+        this.currentPlayer = null;
     }
 
-    public Player addPlayer(String name) {
+    public synchronized Player nextPlayer() {
+        List<Player> keys = new ArrayList<>(playersScore.keySet());
+        Player nextPlayer;
+        try {
+             nextPlayer = keys.get(keys.indexOf(this.currentPlayer) + 1);
+        } catch(IndexOutOfBoundsException e) {
+            nextPlayer = keys.get(0);
+        }
+        this.currentPlayer = nextPlayer;
+        return nextPlayer;
+    }
+
+    private synchronized void forceCurrentPlayer(Player player) {
+        this.currentPlayer = player;
+    }
+
+    public synchronized Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
+    public synchronized Player addPlayer(String name) {
         Player player = new Player(name);
+
+        //Set currentplayer if first player connected.
+        if(currentPlayer == null)
+            forceCurrentPlayer(player);
+
         this.playersScore.put(player, 0);
         return player;
     }
 
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
         this.playersScore.remove(player);
     }
 
+
     public Map<Player, Integer> getPlayers() {
         return playersScore;
+    }
+
+    public synchronized void addClient(Protocol client) {
+        this.clients.add(client);
+    }
+
+    public synchronized void removeClient(Protocol client) {
+        this.clients.remove(client);
     }
 
     public int addScore(Player player, int score) {
