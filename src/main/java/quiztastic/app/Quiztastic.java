@@ -13,9 +13,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 public class Quiztastic {
-    private static Quiztastic instance;
+    private volatile static Quiztastic instance;
 
-    public static Quiztastic getInstance() {
+    public synchronized static Quiztastic getInstance() {
         if(instance == null) {
             InputStream s = Quiztastic.class
                     .getClassLoader()

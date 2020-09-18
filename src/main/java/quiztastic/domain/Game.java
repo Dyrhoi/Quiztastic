@@ -6,23 +6,20 @@ import quiztastic.core.Category;
 import quiztastic.core.Question;
 import quiztastic.ui.Protocol;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
 
     private final Board board;
     private final List<Answer> answerList;
-    private final Map<Player, Integer> playersScore;
     private final ArrayList<Protocol> clients;
     private volatile Player currentPlayer;
+    private volatile Map<Player, Integer> playersScore;
 
     public Game(Board board, List<Answer> answerList) {
         this.board = board;
         this.answerList = answerList;
-        this.playersScore = new HashMap<>();
+        this.playersScore = new LinkedHashMap<>();
         this.clients = new ArrayList<>();
 
         this.currentPlayer = null;
@@ -34,10 +31,22 @@ public class Game {
         try {
              nextPlayer = keys.get(keys.indexOf(this.currentPlayer) + 1);
         } catch(IndexOutOfBoundsException e) {
-            nextPlayer = keys.get(0);
+            try {
+                nextPlayer = keys.get(0);
+            } catch (IndexOutOfBoundsException e2) {
+                nextPlayer = null;
+            }
         }
         this.currentPlayer = nextPlayer;
+        if(playersScore.size() > 0) broadcastNextTurn();
+
         return nextPlayer;
+    }
+
+    private void broadcastNextTurn() {
+        for (Protocol client : clients) {
+            client.getOut().println("It's " + currentPlayer + " turn to choose a Question!");
+        }
     }
 
     private synchronized void forceCurrentPlayer(Player player) {
@@ -61,6 +70,8 @@ public class Game {
 
     public synchronized void removePlayer(Player player) {
         this.playersScore.remove(player);
+        if(currentPlayer == player)
+            nextPlayer();
     }
 
 

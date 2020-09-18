@@ -265,13 +265,13 @@ public class Protocol implements Runnable {
 
     public void getScores() {
 
-        String scoreText = "";
+        StringBuilder scoreText = new StringBuilder();
 
         for (Map.Entry<Player, Integer> entry : this.game.getPlayers().entrySet()) {
             Player player = entry.getKey();
             int score = entry.getValue();
 
-            scoreText += player.getName() + " " + score + ", ";
+            scoreText.append(player.getName()).append(" ").append(score).append(", ");
         }
         out.println(scoreText.substring(0, scoreText.length() - 2));
     }
@@ -279,5 +279,13 @@ public class Protocol implements Runnable {
     public void debug(String[] args) {
         out.println("Players connected:");
         out.println(this.game.getPlayers());
+    }
+
+    public PrintWriter getOut() {
+        return out;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
