@@ -128,6 +128,13 @@ public class Game {
         return board;
     }
 
+    public synchronized void kickAll() {
+        for (Protocol client : clients) {
+            this.removePlayer(client.getPlayer());
+            client.setRunning(false);
+        }
+    }
+
     private class Answer {
         private final int categoryNumber;
         private final int questionScore;

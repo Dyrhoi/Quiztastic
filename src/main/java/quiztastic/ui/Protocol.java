@@ -19,6 +19,7 @@ public class Protocol implements Runnable {
     private final PrintWriter out;
     private final Game game;
     private Player player;
+    private boolean running = true;
 
     public Protocol(Scanner in, PrintWriter out) {
         this.in = in;
@@ -81,7 +82,7 @@ public class Protocol implements Runnable {
         String line = fetchInput(">");
         String cmd = fetchCmd(line);
         String[] args = fetchArgs(cmd, line);
-        while (!cmd.equals("quit")) {
+        while (!cmd.equals("quit") && running) {
             System.out.println("command executed: " + cmd);
             switch (cmd) {
                 case "h":
@@ -99,6 +100,9 @@ public class Protocol implements Runnable {
                 case "s":
                 case "score":
                     getScores();
+                    break;
+                case "forcekick":
+                    this.game.kickAll();
                     break;
                 case "debug":
                     debug(args);
@@ -121,7 +125,8 @@ public class Protocol implements Runnable {
                         "  - [h]elp: ask for help.\n\r" +
                         "  - [d]raw: draw the board.\n\r" +
                         "  - [a]nswer A200: get the question for category A, question 200.\n\r" +
-                        "  - [q]uit: exit program."
+                        "  - [s]core: see everyone's score.\n\r" +
+                        "  - quit: exit program."
         );
     }
 
@@ -287,5 +292,9 @@ public class Protocol implements Runnable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }
